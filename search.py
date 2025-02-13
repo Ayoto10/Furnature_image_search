@@ -44,3 +44,19 @@ faiss.write_index(index, "index.faiss")
 np.save("image_paths.npy", image_paths)
 
 print("✅ تم إنشاء الفهرس بنجاح!")
+from flask import Flask, request, jsonify
+import search  # افتراضيًا كود البحث عندكِ في search.py
+
+app = Flask(__name__)
+
+@app.route('/search', methods=['POST'])
+def image_search():
+    image_path = request.json.get("image_path")
+    if not image_path:
+        return jsonify({"error": "No image path provided"}), 400
+
+    result = search.find_similar(image_path)  # استخدمي دالتكِ هنا
+    return jsonify({"result": result})
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
